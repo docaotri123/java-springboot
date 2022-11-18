@@ -1,6 +1,9 @@
 package com.example.demo;
 
 public class Apple {
+    public Apple(Apple apple) {
+    }
+
     public int getWeight() {
         return weight;
     }
@@ -20,6 +23,16 @@ public class Apple {
     public Apple(int weight, String color) {
         this.weight = weight;
         this.color = color;
+    }
+
+    public Apple() {
+    }
+    @Override
+    public String toString() {
+        return "Apple{" +
+                "weight=" + weight +
+                ", color='" + color + '\'' +
+                '}';
     }
 
     private int weight;
