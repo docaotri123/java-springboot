@@ -1,7 +1,9 @@
 package com.example.demo.service;
 
 import com.example.demo.model.Product;
-import com.example.demo.repository.ProductRepository;
+import com.example.demo.model.Tag;
+import com.example.demo.model.Tutorial;
+import com.example.demo.repository.*;
 import com.example.demo.share.utils.MetaResponseObject;
 import com.example.demo.share.utils.ResponseObject;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,6 +20,14 @@ import java.util.Optional;
 public class ProductService implements IProductService {
     @Autowired
     private ProductRepository productRepository;
+    @Autowired
+    private TutorialDetailRepository tutorialDetailRepository;
+    @Autowired
+    private TutorialRepository tutorialRepository;
+    @Autowired
+    private CommentRepository commentRepository;
+    @Autowired
+    private TagRepository tagRepository;
 
     @Override
     public ResponseEntity<ResponseObject> products(int page, int size) {
@@ -60,5 +70,36 @@ public class ProductService implements IProductService {
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ResponseObject(e.getMessage(), null));
         }
+    }
+
+    @Override
+    public ResponseEntity<ResponseObject> getTutorialById(Long id) {
+//        TutorialDetail addedDetail = new TutorialDetail();
+//        addedDetail.setCreatedBy("Tri");
+//        // TutorialDetail detail = tutorialDetailRepository.save(addedDetail);
+//        Tutorial addedTutorial = new Tutorial();
+//        addedTutorial.setTitle(1D);
+//        addedTutorial.setDescription("2222");
+//        addedTutorial.setTutorialDetail(addedDetail);
+//        Tutorial tutorial = tutorialRepository.save(addedTutorial);
+//        Tutorial tutorial = tutorialRepository.findById(id).orElseThrow();
+//        Comment comment = new Comment();
+//        comment.setContent("Comment 1");
+//        comment.setTutorial(tutorial);
+//        Comment commentCreated = commentRepository.save(comment);
+//        System.out.println(commentCreated);
+//        Tag tag = new Tag();
+//        tag.setTutorials(List.of(tutorial));
+//        tag.setName("javascript");
+//        // List<Tag> tags = List.of(tag);
+//        tagRepository.save(tag);
+////       //  List<Comment> comments = tutorialWithComments.getComments();
+//        List<Tag> tags = tutorial.getTags();
+//        System.out.println(tags);
+        Tutorial tutorial = tutorialRepository.findById(id).orElseThrow();
+        List<Tag> tags = tutorial.getTags();
+        System.out.println(tags);
+
+        return ResponseEntity.status(200).body(new ResponseObject("", tutorial.toString()));
     }
 }

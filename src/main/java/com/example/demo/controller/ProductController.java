@@ -26,4 +26,9 @@ public class ProductController {
     ResponseEntity<ResponseObject> deleteById(@PathVariable Long id) {
         return productService.deleteById(id);
     }
+
+    @GetMapping("/tutorials/{id}")
+    ResponseEntity<ResponseObject> getTutorialById(@PathVariable Long id) {
+        return productService.getTutorialById(id);
+    }
 }

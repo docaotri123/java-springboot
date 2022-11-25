@@ -7,4 +7,6 @@ public interface IProductService {
     ResponseEntity<ResponseObject> products(int page, int size);
     ResponseEntity<ResponseObject> getById(Long id);
     ResponseEntity<ResponseObject> deleteById(Long id);
+
+    ResponseEntity<ResponseObject> getTutorialById(Long id);
 }
