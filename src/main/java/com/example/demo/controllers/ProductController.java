@@ -28,7 +28,7 @@ public class ProductController {
     @GetMapping("")
     String products() throws SQLException {
 //        getVersion.callInsertLogsV2("A", "ACB");
-        getVersion.callInsertLogsV1("A", "ABC");
+        getVersion.callInsertLogsAndPersons("A", "ABC");
 
         return getVersion.getVersion();
     }

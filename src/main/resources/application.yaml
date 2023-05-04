@@ -21,8 +21,16 @@ server:
 
 spring:
   datasource:
-    url: jdbc:postgresql://ep-dark-hill-440055.ap-southeast-1.aws.neon.tech:5432/onlinepayment-dev
+    url: jdbc:postgresql://ep-dark-hill-440055.ap-southeast-1.aws.neon.tech:5432/onlinepayment-dev?escapeSyntaxCallMode=call
     username: docaotri211997
-    password: LtTJn93yCWAA
+    password: Qm5dPRVs4fHT
     driver-class-name: org.postgresql.Driver
-    escapeSyntaxCallMode: call
+  jpa:
+    hibernate:
+      show-sql: true
+logging:
+  level:
+    org:
+      springframework:
+        jdbc:
+          core: TRACE
