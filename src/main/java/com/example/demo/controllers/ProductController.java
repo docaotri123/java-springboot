@@ -26,11 +26,12 @@ public class ProductController {
     private DataSource dataSource;
 
     @GetMapping("")
-    String products() throws SQLException {
+    List<Person> products() throws SQLException {
 //        getVersion.callInsertLogsV2("A", "ACB");
-        getVersion.callInsertLogsAndPersons("A", "ABC");
 
-        return getVersion.getVersion();
+//        return getVersion.getVersion();
+
+        return getVersion.callInsertLogsAndPersons("A", "ABC");
     }
 
     @GetMapping("/test")

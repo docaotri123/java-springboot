@@ -1,19 +1,20 @@
 package com.example.demo.procedure;
 
+import com.example.demo.mapper.PersonRowMapper;
+import com.example.demo.models.Person;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.SqlOutParameter;
 import org.springframework.jdbc.core.SqlParameter;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.simple.SimpleJdbcCall;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.sql.DataSource;
 import java.sql.CallableStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.sql.Types;
 import java.util.Arrays;
-import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @Component
@@ -38,67 +39,41 @@ public class GetVersion {
                         new SqlParameter("p_system_id", Types.VARCHAR),
                         new SqlOutParameter("po_err_msg", Types.VARCHAR)
                 );
-        System.out.println("OUT parameter value: " + logLevel.length());
-        Map<String, Object> inParams = new HashMap<>();
-        inParams.put("p_log_level", "A");
-        inParams.put("p_system_id", systemId);
+        MapSqlParameterSource mapSqlParameterSource = new MapSqlParameterSource();
+        mapSqlParameterSource.addValue("p_log_level", logLevel);
+        mapSqlParameterSource.addValue("p_system_id", systemId);
 
-        Map<String, Object> outParams = simpleJdbcCall.execute(Map.class, inParams);
-
-        String poErrMsg = (String) outParams.get("po_err_msg");
-        System.out.println("OUT parameter value: " + poErrMsg);
-    }
-
-    public void callInsertLogsV3(String logLevel, String systemId) {
-        SimpleJdbcCall simpleJdbcCall = new SimpleJdbcCall(jdbcTemplate)
-                .withProcedureName("insert_logs")
-                .declareParameters(
-                        new SqlParameter("p_log_level", Types.VARCHAR),
-                        new SqlParameter("p_system_id", Types.VARCHAR),
-                        new SqlOutParameter("po_err_msg", Types.VARCHAR)
-                );
-        System.out.println("OUT parameter value: " + logLevel.length());
-        Map<String, Object> inParams = new HashMap<>();
-        inParams.put("p_log_level", "A");
-        inParams.put("p_system_id", systemId);
-
-        Map<String, Object> outParams = simpleJdbcCall.execute(Map.class, inParams);
+        Map<String, Object> outParams = simpleJdbcCall.execute(mapSqlParameterSource);
 
         String poErrMsg = (String) outParams.get("po_err_msg");
         System.out.println("OUT parameter value: " + poErrMsg);
     }
 
-    public void callInsertLogsAndPersons(String logLevel, String systemId) throws SQLException {
+    @Transactional
+    public List<Person> callInsertLogsAndPersons(String logLevel, String systemId) {
         SimpleJdbcCall jdbcCall = new SimpleJdbcCall(jdbcTemplate)
                 .withProcedureName("insert_logs_and_get_persons")
                 .declareParameters(
                         new SqlParameter("p_log_level", Types.VARCHAR),
                         new SqlParameter("p_system_id", Types.VARCHAR),
                         new SqlOutParameter("po_err_msg", Types.VARCHAR),
-                        new SqlOutParameter("po_persons", Types.REF_CURSOR)
+                        new SqlOutParameter("po_persons", Types.OTHER)
                 );
 
-        Map<String, Object> inParams = new HashMap<>();
-        inParams.put("p_log_level", logLevel);
-        inParams.put("p_system_id", systemId);
+        MapSqlParameterSource mapSqlParameterSource = new MapSqlParameterSource();
+        mapSqlParameterSource.addValue("p_log_level", logLevel);
+        mapSqlParameterSource.addValue("p_system_id", systemId);
 
-        Map<String, Object> outParams = jdbcCall.execute(inParams);
+        jdbcCall.returningResultSet("po_persons", new PersonRowMapper());
 
+        Map<String, Object> outParams = jdbcCall.execute(mapSqlParameterSource);
+
+        @SuppressWarnings("unchecked")
+        List<Person> people = (List<Person>) outParams.get("po_persons");
         String errMsg = (String) outParams.get("po_err_msg");
-        ResultSet rs = (ResultSet) outParams.get("po_persons");
         System.out.println(errMsg);
 
-        try {
-            while (rs.next()) {
-                // Read and process the rows from the ResultSet
-                // ...
-            }
-        } catch (SQLException e) {
-            // Handle any SQL exceptions that might occur
-            // ...
-        } finally {
-            rs.close();
-        }
+        return people;
     }
 
 
